@@ -2,33 +2,28 @@ def canUnlockAll(boxes):
     """
     Determine if all boxes can be opened.
     Args:
-      boxes(list of list of int): A list where each element is a list of keys.
+      boxes (list of list of int): A list where each element is a list of keys.
 
     Returns:
       bool: True if all boxes can be opened, False otherwise.
     """
 
-    # Streamlined Validation
-    if not all(isinstance(box, list) and all(isinstance(key, int) for key in box) for box in boxes if isinstance(boxes, list)):
+    # Input validation
+    if not boxes or not all(isinstance(box, list) for box in boxes):
         return False
 
-    def dfs(index, visited):
-        """
-        Optimized Depth-first search to visit boxes.
-        Includes cycle detection to prevent infinite recursion.
+    unlocked = [False] * len(boxes)  # Track which boxes have been unlocked
+    unlocked[0] = True  # The first box is always unlocked
+    keys = set(boxes[0])  # Start with keys from the first box
 
-        Args:
-          index (int): The index of the current box being visited.
-          visited (set): A set of visited boxes to track progress and avoid revisits.
-        """
-        if index in visited or index >= len(boxes):
-            return
-        visited.add(index)
-        for key in set(boxes[index]):  # Ensure key uniqueness and iterate efficiently
-            if key not in visited:
-                dfs(key, visited)
+    while keys:
+        new_keys = set()
+        for key in keys:
+            if key < len(boxes) and not unlocked[key]:
+                unlocked[key] = True  # Mark the box as unlocked
+                new_keys.update(boxes[key])  # Add new keys from this box
+        if not new_keys:
+            break  # Exit if no new keys were found
+        keys = new_keys
 
-    visited = set()
-    dfs(0, visited)
-
-    return len(visited) == len(boxes)
+    return all(unlocked)
