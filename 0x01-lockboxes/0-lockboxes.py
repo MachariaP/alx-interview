@@ -8,6 +8,16 @@ def canUnlockAll(boxes):
       bool: True if all boxes can be opened, False otherwise.
     """
 
+    # Validation
+    if not isinstance(boxes, list) or not boxes:
+        return False
+    for box in boxes:
+        if not isinstance(box, list):
+            return False
+        for key in box:
+            if not isinstance(key, int):
+                return False
+
     def dfs(index):
         """
         Depth-first search to visit boxes.
