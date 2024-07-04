@@ -8,33 +8,27 @@ def canUnlockAll(boxes):
       bool: True if all boxes can be opened, False otherwise.
     """
 
-    # Validation
-    if not isinstance(boxes, list) or not boxes:
+    # Streamlined Validation
+    if not all(isinstance(box, list) and all(isinstance(key, int) for key in box) for box in boxes if isinstance(boxes, list)):
         return False
-    for box in boxes:
-        if not isinstance(box, list):
-            return False
-        for key in box:
-            if not isinstance(key, int):
-                return False
 
-    def dfs(index):
+    def dfs(index, visited):
         """
-        Depth-first search to visit boxes.
-
-        Mark the current box as visited and recursively visit boxes
-        for which the current box contains keys.
+        Optimized Depth-first search to visit boxes.
+        Includes cycle detection to prevent infinite recursion.
 
         Args:
           index (int): The index of the current box being visited.
+          visited (set): A set of visited boxes to track progress and avoid revisits.
         """
-
+        if index in visited or index >= len(boxes):
+            return
         visited.add(index)
-        for key in boxes[index]:
-            if key not in visited and key < len(boxes):
-                dfs(key)
+        for key in set(boxes[index]):  # Ensure key uniqueness and iterate efficiently
+            if key not in visited:
+                dfs(key, visited)
 
     visited = set()
-    dfs(0)
+    dfs(0, visited)
 
     return len(visited) == len(boxes)
