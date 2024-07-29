@@ -37,6 +37,8 @@ def validUTF8(data):
 
     # loop through each byte in data set
     for byte in data:
+        if byte > 255:
+            byte = byte & 0xFF  # working with 8 least significant bits
         # if this is start byte of the utf-8 character
         if num_bytes == 0:
             # determine the number of bytes in the UTF-8 character
